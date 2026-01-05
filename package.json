@@ -1,0 +1,13 @@
+{
+  "name": "attendance-management",
+  "private": true,
+  "workspaces": ["backend", "frontend"],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "build": "npm --workspace backend run build && npm --workspace frontend run build",
+    "test": "npm --workspace backend run test && npm --workspace frontend run test -- --runInBand",
+    "start": "npm --workspace backend run start"
+  }
+}
