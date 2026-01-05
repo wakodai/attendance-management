@@ -10,8 +10,13 @@ describe('Attendance API', () => {
     await clearAll();
   });
 
-  afterAll(() => {
-    db.close();
+  afterAll(async () => {
+    await new Promise<void>((resolve, reject) => {
+      db.close((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
   });
 
   it('creates students and sessions then records attendance', async () => {

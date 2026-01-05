@@ -14,6 +14,7 @@ export function createStudent(input: Omit<Student, 'id'>): Promise<Student> {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare('INSERT INTO students (name, grade, contact) VALUES (?, ?, ?)');
     stmt.run(input.name, input.grade, input.contact || null, function (err) {
+      stmt.finalize();
       if (err) return reject(err);
       resolve({ id: this.lastID, ...input });
     });
@@ -50,6 +51,7 @@ export function createSession(input: Omit<Session, 'id'>): Promise<Session> {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare('INSERT INTO sessions (date, topic) VALUES (?, ?)');
     stmt.run(input.date, input.topic, function (err) {
+      stmt.finalize();
       if (err) return reject(err);
       resolve({ id: this.lastID, ...input });
     });
@@ -95,6 +97,7 @@ export function upsertAttendance(entry: Omit<AttendanceRecord, 'id'>): Promise<A
             'INSERT INTO attendance (studentId, sessionId, status, note) VALUES (?, ?, ?, ?)'
           );
           stmt.run(entry.studentId, entry.sessionId, entry.status, entry.note || null, function (insertErr) {
+            stmt.finalize();
             if (insertErr) return reject(insertErr);
             resolve({ id: this.lastID, ...entry });
           });

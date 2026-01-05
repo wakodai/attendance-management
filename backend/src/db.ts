@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 sqlite3.verbose();
@@ -9,6 +10,11 @@ const __dirname = path.dirname(__filename);
 
 const defaultDbPath = path.resolve(__dirname, '..', 'data', 'attendance.db');
 const dbPath = process.env.DB_PATH || defaultDbPath;
+
+if (dbPath !== ':memory:') {
+  const dbDir = path.dirname(dbPath);
+  fs.mkdirSync(dbDir, { recursive: true });
+}
 
 export const db = new sqlite3.Database(dbPath);
 
