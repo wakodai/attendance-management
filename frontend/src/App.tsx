@@ -22,6 +22,17 @@ function App() {
   const [summary, setSummary] = useState<Awaited<ReturnType<typeof fetchSummary>>>([]);
   const [loading, setLoading] = useState(false);
 
+  const totalStudents = useMemo(() => students.length, [students]);
+  const totalSessions = useMemo(() => sessions.length, [sessions]);
+  const { presentCount, totalCount } = useMemo(() => {
+    const presentTotal = summary.reduce((acc, item) => acc + item.present + item.excused, 0);
+    const overallTotal = summary.reduce(
+      (acc, item) => acc + item.present + item.absent + item.late + item.excused,
+      0
+    );
+    return { presentCount: presentTotal, totalCount: overallTotal };
+  }, [summary]);
+
   const sessionOptions = useMemo(
     () => sessions.map((s) => ({ value: s.id, label: `${s.date} - ${s.topic}` })),
     [sessions]
@@ -89,23 +100,54 @@ function App() {
 
   return (
     <div className="page">
-      <header className="header">
+      <header className="hero">
         <div>
           <p className="eyebrow">塾向け出欠管理</p>
           <h1>Attendance Manager</h1>
-          <p className="subtitle">学生と授業を登録し、出欠を記録・集計します。</p>
+          <p className="subtitle">学生と授業を登録し、出欠をリアルタイムに記録・集計します。</p>
+          <div className="hero-tags">
+            <span className="pill">最新の授業状況</span>
+            <span className="pill pill-ghost">ダッシュボード表示</span>
+          </div>
+        </div>
+        <div className="stat-grid">
+          <div className="stat-card">
+            <p className="stat-label">登録学生</p>
+            <p className="stat-value">{totalStudents}</p>
+            <p className="stat-helper">名</p>
+          </div>
+          <div className="stat-card">
+            <p className="stat-label">授業数</p>
+            <p className="stat-value">{totalSessions}</p>
+            <p className="stat-helper">件</p>
+          </div>
+          <div className="stat-card">
+            <p className="stat-label">出席率</p>
+            <p className="stat-value">
+              {totalCount > 0 ? Math.round((presentCount / totalCount) * 100) : 0}%
+            </p>
+            <p className="stat-helper">公欠を含む出席</p>
+          </div>
         </div>
       </header>
 
       <main className="layout">
         <section className="panel">
-          <h2>学生管理</h2>
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Student Hub</p>
+              <h2>学生管理</h2>
+              <p className="section-desc">新しい学生を登録し、連絡先を一元管理します。</p>
+            </div>
+            <span className="pill pill-ghost">{students.length} 名登録済み</span>
+          </div>
           <StudentForm onSubmit={handleStudentCreated} />
           <ul className="list">
             {students.map((s) => (
               <li key={s.id} className="list-item">
-                <div>
-                  <strong>{s.name}</strong>
+                <div className="avatar">{s.name.slice(0, 1)}</div>
+                <div className="list-texts">
+                  <div className="list-title">{s.name}</div>
                   <div className="muted">{s.grade}</div>
                 </div>
                 {s.contact && <span className="badge">{s.contact}</span>}
@@ -115,7 +157,14 @@ function App() {
         </section>
 
         <section className="panel">
-          <h2>授業管理</h2>
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Session Planner</p>
+              <h2>授業管理</h2>
+              <p className="section-desc">授業を登録し、出欠入力のセッションを切り替えます。</p>
+            </div>
+            <span className="pill pill-outline">ステータス更新</span>
+          </div>
           <SessionForm onSubmit={handleSessionCreated} />
           <div className="select-row">
             <label htmlFor="session">表示する授業</label>
@@ -143,7 +192,14 @@ function App() {
         </section>
 
         <section className="panel">
-          <h2>出欠集計</h2>
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Insight</p>
+              <h2>出欠集計</h2>
+              <p className="section-desc">学生ごとの出席傾向をカードで確認できます。</p>
+            </div>
+            <span className="pill">自動更新</span>
+          </div>
           <SummaryPanel summary={summary} />
         </section>
       </main>
