@@ -1,7 +1,7 @@
 import request from 'supertest';
-import app from './app.js';
-import { db, initializeSchema } from './db.js';
-import { clearAll } from './repositories.js';
+import app from './app';
+import { db, initializeSchema } from './db';
+import { clearAll } from './repositories';
 
 initializeSchema();
 

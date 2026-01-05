@@ -1,5 +1,5 @@
-import { db } from './db.js';
-import { AttendanceRecord, AttendanceStatus, Session, Student } from './types.js';
+import { db } from './db';
+import { AttendanceRecord, AttendanceStatus, Session, Student } from './types';
 
 export function listStudents(): Promise<Student[]> {
   return new Promise((resolve, reject) => {

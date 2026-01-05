@@ -9,9 +9,9 @@ import {
   listStudents,
   updateStudent,
   upsertAttendance,
-} from './repositories.js';
-import { initializeSchema } from './db.js';
-import { AttendanceStatus } from './types.js';
+} from './repositories';
+import { initializeSchema } from './db';
+import { AttendanceStatus } from './types';
 
 initializeSchema();
 
